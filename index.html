@@ -8,6 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --lav: #7B68C8; --lav-light: #F0EEFF; --lav-border: #9B8FD8; }
     #game-wrapper { padding: 1rem 1rem 2.5rem; min-height: 100vh; background: #ffffff; position: relative; overflow: hidden; }
+    @media (max-width: 600px) { #game-wrapper { padding-top: 3.5rem; } }
     .garden-deco { position: absolute; pointer-events: none; opacity: 0.7; animation: sway 4s ease-in-out infinite; }
     @keyframes sway { 0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)} }
     @keyframes bob { 0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)} }
@@ -25,7 +26,10 @@
     #restart-btn { font-size: 11px; padding: 5px 12px; cursor: pointer; border-radius: 20px; border: 1.5px solid #ddd; background: #fff; color: #555; font-family: inherit; }
     #restart-btn:hover { background: #f5f5f5; }
     #grid-wrap { display: flex; justify-content: center; position: relative; z-index: 1; margin-top: 1.4rem; padding: 0 4px; }
-    #grid { display: grid; gap: 8px; width: 100%; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); }
+    #grid { display: grid; gap: 8px; width: 100%; max-width: 520px; grid-template-columns: repeat(4, 1fr); }
+    #grid.cols-4 { grid-template-columns: repeat(4, 1fr); max-width: 360px; }
+    #grid.cols-5 { grid-template-columns: repeat(5, 1fr); max-width: 440px; }
+    #grid.cols-6 { grid-template-columns: repeat(6, 1fr); max-width: 520px; }
     .card { aspect-ratio: 1; cursor: pointer; position: relative; }
     .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); }
     .card.flipped .card-inner, .card.matched .card-inner { transform: rotateY(180deg); }
@@ -68,14 +72,14 @@
 </head>
 <body>
 <div id="game-wrapper">
-  <div class="garden-deco" style="font-size:26px;top:1%;left:1%;animation-delay:0s">🌷</div>
-  <div class="garden-deco" style="font-size:20px;top:1%;left:9%;animation-delay:0.3s">🐝</div>
-  <div class="garden-deco" style="font-size:24px;top:1%;left:17%;animation-delay:0.6s">🌼</div>
-  <div class="garden-deco" style="font-size:18px;top:0.5%;left:25%;animation-delay:0.9s">🦋</div>
-  <div class="garden-deco" style="font-size:22px;top:1%;right:1%;animation-delay:0.4s">🌸</div>
-  <div class="garden-deco" style="font-size:18px;top:1%;right:9%;animation-delay:0.7s">🐞</div>
-  <div class="garden-deco" style="font-size:24px;top:1%;right:17%;animation-delay:1s">🌻</div>
-  <div class="garden-deco" style="font-size:18px;top:0.5%;right:25%;animation-delay:1.3s">🍀</div>
+  <div class="garden-deco" style="font-size:26px;top:10px;left:1%;animation-delay:0s">🌷</div>
+  <div class="garden-deco" style="font-size:20px;top:10px;left:9%;animation-delay:0.3s">🐝</div>
+  <div class="garden-deco" style="font-size:24px;top:10px;left:17%;animation-delay:0.6s">🌼</div>
+  <div class="garden-deco" style="font-size:18px;top:10px;left:25%;animation-delay:0.9s">🦋</div>
+  <div class="garden-deco" style="font-size:22px;top:10px;right:1%;animation-delay:0.4s">🌸</div>
+  <div class="garden-deco" style="font-size:18px;top:10px;right:9%;animation-delay:0.7s">🐞</div>
+  <div class="garden-deco" style="font-size:24px;top:10px;right:17%;animation-delay:1s">🌻</div>
+  <div class="garden-deco" style="font-size:18px;top:10px;right:25%;animation-delay:1.3s">🍀</div>
   <div class="garden-deco" style="font-size:20px;top:38%;left:0.5%;animation-delay:0.5s;animation-name:bob">🌿</div>
   <div class="garden-deco" style="font-size:18px;top:58%;left:0.5%;animation-delay:1.1s;animation-name:bob">🌺</div>
   <div class="garden-deco" style="font-size:20px;top:38%;right:0.5%;animation-delay:0.8s;animation-name:bob">🌿</div>
@@ -161,16 +165,16 @@ function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Mat
 function spawnConfetti(el){const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;for(let i=0;i<20;i++){const p=document.createElement('div');p.className='confetti-piece';const a=(Math.random()*360)*Math.PI/180,d=40+Math.random()*55,s=5+Math.random()*7;p.style.cssText=`left:${cx}px;top:${cy}px;width:${s}px;height:${s}px;background:${CONFETTI[Math.floor(Math.random()*CONFETTI.length)]};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d}px;--rot:${Math.random()*540}deg;animation-delay:${Math.random()*0.1}s;`;document.body.appendChild(p);setTimeout(()=>p.remove(),1200);}}
 function launchFireworks(){for(let i=0;i<90;i++){setTimeout(()=>{const fw=document.createElement('div');fw.className='firework';const x=15+Math.random()*70,y=10+Math.random()*65,a=Math.random()*Math.PI*2,d=60+Math.random()*130;fw.style.cssText=`left:${x}vw;top:${y}vh;background:${FW_COLORS[Math.floor(Math.random()*FW_COLORS.length)]};--fx:${Math.cos(a)*d}px;--fy:${Math.sin(a)*d}px;animation-duration:${0.6+Math.random()*0.6}s;`;document.body.appendChild(fw);setTimeout(()=>fw.remove(),1500);},i*20);}}
 function setActiveStyle(el,on){if(on){el.style.border=`2px solid ${LAV}`;el.style.background='#fff';el.style.color=LAV;el.style.fontWeight='700';}else{el.style.border='1.5px solid #ddd';el.style.background='#fff';el.style.color='#999';el.style.fontWeight='400';}}
-function loadScores(){try{return JSON.parse(localStorage.getItem('jenjenmatch_scores')||'[]');}catch(e){return[];}}
-function saveScores(s){try{localStorage.setItem('jenjenmatch_scores',JSON.stringify(s));}catch(e){}}
-function addScore(name,topic,difficulty,moves,time){const s=loadScores();s.push({name,topic,difficulty,moves,time});s.sort((a,b)=>a.moves-b.moves||(a.time.localeCompare(b.time)));s.splice(10);saveScores(s);renderLeaderboard();}
-function renderLeaderboard(){const s=loadScores(),body=document.getElementById('lb-body'),empty=document.getElementById('lb-empty');body.innerHTML='';if(!s.length){empty.style.display='block';return;}empty.style.display='none';const medals=['🥇','🥈','🥉'];s.forEach((r,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${medals[i]||i+1}</td><td>${r.name}</td><td>${r.topic}</td><td>${r.difficulty}</td><td>${r.moves}</td><td>${r.time}</td>`;body.appendChild(tr);});}
+const SUPA_URL='https://fpogybpfoqvyncbloxzl.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwb2d5YnBmb3F2eW5jYmxveHpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzODgyMjIsImV4cCI6MjA4OTk2NDIyMn0.5ah_8KthVeBOgSZz9qrE1iuRBTFpj2aBaCBl3Lduaig';
+async function addScore(name,topic,difficulty,moves,time){try{await fetch(`${SUPA_URL}/rest/v1/scores`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`,'Prefer':'return=minimal'},body:JSON.stringify({name,theme:topic,difficulty,moves,time})});}catch(e){console.error('Score save failed',e);}renderLeaderboard();}
+async function renderLeaderboard(){const body=document.getElementById('lb-body'),empty=document.getElementById('lb-empty');body.innerHTML='<tr><td colspan="6" style="text-align:center;color:#bbb;font-style:italic;padding:8px">Loading... 🌸</td></tr>';try{const res=await fetch(`${SUPA_URL}/rest/v1/scores?select=*&order=moves.asc,time.asc&limit=10`,{headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});const scores=await res.json();body.innerHTML='';if(!scores.length){empty.style.display='block';return;}empty.style.display='none';const medals=['🥇','🥈','🥉'];scores.forEach((r,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${medals[i]||i+1}</td><td>${r.name}</td><td>${r.theme}</td><td>${r.difficulty}</td><td>${r.moves}</td><td>${r.time}</td>`;body.appendChild(tr);});}catch(e){body.innerHTML='<tr><td colspan="6" style="text-align:center;color:#bbb;font-style:italic;padding:8px">Could not load scores 🌸</td></tr>';}}
 function showNameModal(score){pendingScore=score;document.getElementById('name-input').value='';document.getElementById('name-modal').classList.add('show');setTimeout(()=>document.getElementById('name-input').focus(),100);}
 function submitScore(){const name=document.getElementById('name-input').value.trim()||'Anonymous';document.getElementById('name-modal').classList.remove('show');if(pendingScore){addScore(name,pendingScore.topic,pendingScore.difficulty,pendingScore.moves,pendingScore.time);pendingScore=null;}}
 document.getElementById('name-submit').addEventListener('click',submitScore);
 document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitScore();});
-document.getElementById('lb-clear').addEventListener('click',()=>{saveScores([]);renderLeaderboard();});
-function init(){clearInterval(timer);seconds=0;moves=0;matched=0;flipped=[];locked=false;started=false;document.getElementById('moves').textContent='0';document.getElementById('matched').textContent='0';document.getElementById('win-screen').classList.remove('show');document.getElementById('grid-wrap').classList.remove('hide');const pool=shuffle([...THEMES[currentTopic].emoji]).slice(0,totalPairs);if(pool.length<totalPairs)return;const cards=shuffle([...pool,...pool]);const grid=document.getElementById('grid');grid.innerHTML='';cards.forEach(emoji=>{const card=document.createElement('div');card.className='card';card.dataset.emoji=emoji;card.innerHTML=`<div class="card-inner"><div class="card-front">?</div><div class="card-back">${emoji}</div></div>`;card.addEventListener('click',onCardClick);grid.appendChild(card);});}
+document.getElementById('lb-clear').addEventListener('click',async()=>{try{await fetch(`${SUPA_URL}/rest/v1/scores?id=gte.0`,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':`Bearer ${SUPA_KEY}`}});}catch(e){}renderLeaderboard();});
+function init(){clearInterval(timer);seconds=0;moves=0;matched=0;flipped=[];locked=false;started=false;document.getElementById('moves').textContent='0';document.getElementById('matched').textContent='0';document.getElementById('win-screen').classList.remove('show');document.getElementById('grid-wrap').classList.remove('hide');const pool=shuffle([...THEMES[currentTopic].emoji]).slice(0,totalPairs);if(pool.length<totalPairs)return;const cards=shuffle([...pool,...pool]);const grid=document.getElementById('grid');grid.innerHTML='';const cols=totalPairs===8?4:totalPairs===10?5:6;grid.className='cols-'+cols;cards.forEach(emoji=>{const card=document.createElement('div');card.className='card';card.dataset.emoji=emoji;card.innerHTML=`<div class="card-inner"><div class="card-front">?</div><div class="card-back">${emoji}</div></div>`;card.addEventListener('click',onCardClick);grid.appendChild(card);});}
 function onCardClick(e){const card=e.currentTarget;if(locked||card.classList.contains('flipped')||card.classList.contains('matched'))return;if(!started){started=true;clearInterval(timer);timer=setInterval(()=>seconds++,1000);}playFlipSound();card.classList.add('flipped');flipped.push(card);if(flipped.length===2){locked=true;moves++;document.getElementById('moves').textContent=moves;const[a,b]=flipped;if(a.dataset.emoji===b.dataset.emoji){a.classList.add('matched');b.classList.add('matched');matched++;document.getElementById('matched').textContent=matched;playMatchSound();setTimeout(()=>{spawnConfetti(a);spawnConfetti(b);},350);flipped=[];locked=false;if(matched===totalPairs){clearInterval(timer);const finalTime=formatTime(seconds),finalMoves=moves;setTimeout(()=>{playWinSound();launchFireworks();setTimeout(()=>{document.getElementById('grid-wrap').classList.add('hide');document.getElementById('win-sub').textContent=`${finalMoves} moves · ${finalTime} · Amazing! 🌸`;document.getElementById('win-screen').classList.add('show');setTimeout(()=>showNameModal({topic:THEMES[currentTopic].label,difficulty:DIFF_LABEL[totalPairs],moves:finalMoves,time:finalTime}),800);},2000);},1200);}}else{setTimeout(()=>{a.classList.remove('flipped');b.classList.remove('flipped');flipped=[];locked=false;},900);}}}
 document.getElementById('restart-btn').addEventListener('click',init);
 document.getElementById('play-again').addEventListener('click',init);
