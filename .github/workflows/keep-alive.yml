@@ -12,6 +12,6 @@ jobs:
     steps:
       - name: Ping Supabase database
         run: |
-          curl -sS \
+          curl --fail --silent --show-error --retry 3 \
             -H "apikey: ${{ secrets.SUPABASE_API_KEY }}" \
             "https://fpogybpfoqvyncbloxzl.supabase.co/rest/v1/scores?select=id&limit=1"
