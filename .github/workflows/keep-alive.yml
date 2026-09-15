@@ -1,4 +1,5 @@
 name: Keep Supabase Alive
+
 on:
   schedule:
     - cron: '0 8 * * *' # runs once a day
@@ -12,5 +13,5 @@ jobs:
       - name: Ping Supabase database
         run: |
           curl -sS \
-            -H "apikey: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" \
+            -H "apikey: ${{ secrets.SUPABASE_API_KEY }}" \
             "https://fpogybpfoqvyncbloxzl.supabase.co/rest/v1/scores?select=id&limit=1"
